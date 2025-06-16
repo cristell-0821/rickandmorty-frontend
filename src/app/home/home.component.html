@@ -1,0 +1,42 @@
+<div class="container-fluid bg-dark text-white py-4 min-vh-100">
+  <h1 class="text-center text-light mb-5">Personajes de Rick and Morty</h1>
+
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-6" *ngFor="let character of characters">
+        
+        <a [routerLink]="['/character', character.id]" class="text-decoration-none text-reset">
+          <div class="d-flex bg-secondary bg-opacity-25 rounded p-3 shadow hover-shadow mb-4" style="cursor: pointer;">
+            
+            <!-- Imagen -->
+            <img [src]="character.image" [alt]="character.name" class="rounded me-3"
+                 style="width: 120px; height: 120px; object-fit: cover;">
+            
+            <!-- Detalles -->
+            <div class="flex-grow-1">
+              <h4 class="fw-bold text-white">{{ character.name }}</h4>
+              <p class="mb-2 d-flex align-items-center">
+                <!-- Punto verde -->
+                <span class="me-2" 
+                      style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #00ff00;"></span>
+                {{ character.status }} - {{ character.species }}
+              </p>
+
+              <!-- Ultima ubi -->
+              <p class="mb-1" style="font-size: 0.9rem; color: #cccccc;">Ultima ubicación conocida:</p>
+              <p class="text-warning fw-semibold mb-2">{{ character.location?.name }}</p>
+
+              <!-- Primer episodio -->
+              <p class="mb-1" style="font-size: 0.9rem; color: #cccccc;">Primera episodio:</p>
+              <p class="text-white fw-semibold">
+                {{ firstEpisodes[character.id] || 'Cargando...' }}
+              </p>
+            </div>
+
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </div>
+</div>

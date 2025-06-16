@@ -1,0 +1,41 @@
+<div class="container-fluid bg-dark text-white py-5 min-vh-100" *ngIf="character && !error">
+  <div class="container d-flex flex-column align-items-center">
+
+    <div id="pdfContent" class="bg-white text-dark rounded shadow p-4 w-100" style="max-width: 600px;">
+      
+      <div class="text-center mb-4">
+        <img [src]="character.image" crossorigin="anonymous" class="rounded"
+             style="width: 180px; height: 180px; object-fit: cover;" [alt]="character.name">
+      </div>
+
+      <!-- Datos -->
+      <h2 class="text-center fw-bold mb-3">{{ character.name }}</h2>
+
+      <p class="text-center mb-2">
+        <span class="me-2"
+              style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #00cc00;"></span>
+        {{ character.status }} - {{ character.species }}
+      </p>
+
+      <hr>
+
+      <p class="mb-1 text-muted"><strong>Origen:</strong></p>
+      <p class="fw-semibold">{{ character.origin.name }}</p>
+
+      <p class="mb-1 text-muted"><strong>Última ubicación conocida:</strong></p>
+      <p class="fw-semibold">{{ character.location?.name }}</p>
+
+      <p class="mb-1 text-muted"><strong>Primera aparición:</strong></p>
+      <p class="fw-semibold">{{ firstEpisodeName }}</p>
+
+    </div>
+
+    <!-- Btn descarga pdf -->
+    <button class="btn btn-success mt-4" (click)="downloadPDF()">Descargar PDF</button>
+  </div>
+</div>
+
+<div *ngIf="error" class="container py-5 text-center text-white bg-dark min-vh-100">
+  <h2>Personaje no encontrado </h2>
+  <a routerLink="/" class="btn btn-outline-light mt-3">Volver a inicio</a>
+</div>
