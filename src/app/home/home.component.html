@@ -1,42 +1,134 @@
-<div class="container-fluid bg-dark text-white py-4 min-vh-100">
-  <h1 class="text-center text-light mb-5">Personajes de Rick and Morty</h1>
+<div class="home-wrapper">
 
-  <div class="container">
-    <div class="row g-4">
-      <div class="col-md-6" *ngFor="let character of characters">
-        
-        <a [routerLink]="['/character', character.id]" class="text-decoration-none text-reset">
-          <div class="d-flex bg-secondary bg-opacity-25 rounded p-3 shadow hover-shadow mb-4" style="cursor: pointer;">
-            
-            <!-- Imagen -->
-            <img [src]="character.image" [alt]="character.name" class="rounded me-3"
-                 style="width: 120px; height: 120px; object-fit: cover;">
-            
-            <!-- Detalles -->
-            <div class="flex-grow-1">
-              <h4 class="fw-bold text-white">{{ character.name }}</h4>
-              <p class="mb-2 d-flex align-items-center">
-                <!-- Punto verde -->
-                <span class="me-2" 
-                      style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #00ff00;"></span>
-                {{ character.status }} - {{ character.species }}
-              </p>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-content">
+      <img src="assets/img/titulo.webp" alt="Rick and Morty" class="site-title-img" />
+      <p class="site-subtitle">Character Database</p>
+    </div>
+  </header>
 
-              <!-- Ultima ubi -->
-              <p class="mb-1" style="font-size: 0.9rem; color: #cccccc;">Ultima ubicación conocida:</p>
-              <p class="text-warning fw-semibold mb-2">{{ character.location?.name }}</p>
+  <!-- Barra sticky de filtros -->
+  <div class="filters-bar">
+    <div class="filters-inner">
 
-              <!-- Primer episodio -->
-              <p class="mb-1" style="font-size: 0.9rem; color: #cccccc;">Primera episodio:</p>
-              <p class="text-white fw-semibold">
-                {{ firstEpisodes[character.id] || 'Cargando...' }}
-              </p>
-            </div>
-
-          </div>
-        </a>
-
+      <!-- Búsqueda -->
+      <div class="search-wrapper">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Buscar personaje..."
+          [(ngModel)]="searchName"
+          (input)="applyFilters()"
+        />
+        <button *ngIf="searchName" class="clear-btn" (click)="clearSearch()">✕</button>
       </div>
+
+      <!-- Filtro Status -->
+      <div class="filter-chips">
+        <button class="chip" [class.chip--active]="selectedStatus === ''" (click)="setStatus('')">Todos</button>
+        <button class="chip chip--alive" [class.chip--active]="selectedStatus === 'Alive'" (click)="setStatus('Alive')">
+          <span class="chip-dot"></span> Alive
+        </button>
+        <button class="chip chip--dead" [class.chip--active]="selectedStatus === 'Dead'" (click)="setStatus('Dead')">
+          <span class="chip-dot"></span> Dead
+        </button>
+        <button class="chip chip--unknown" [class.chip--active]="selectedStatus === 'unknown'" (click)="setStatus('unknown')">
+          <span class="chip-dot"></span> Unknown
+        </button>
+      </div>
+
+      <!-- Filtro Especie -->
+      <div class="custom-select" [class.custom-select--open]="speciesOpen" (clickOutside)="speciesOpen = false">
+        <button class="custom-select__trigger" (click)="speciesOpen = !speciesOpen">
+          <span>{{ selectedSpecies || 'Todas las especies' }}</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="select-arrow">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </button>
+        <div class="custom-select__dropdown">
+          <button class="custom-option" [class.custom-option--active]="selectedSpecies === ''" (click)="selectSpecies('')">
+            Todas las especies
+          </button>
+          <button *ngFor="let s of availableSpecies" class="custom-option" [class.custom-option--active]="selectedSpecies === s" (click)="selectSpecies(s)">
+            {{ s }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Contador -->
+      <div class="results-counter">
+        <span class="counter-num">{{ filteredCharacters.length }}</span>
+        <span class="counter-label">personajes</span>
+      </div>
+
     </div>
   </div>
+
+  <!-- Grid -->
+  <main class="characters-grid">
+    <a
+      *ngFor="let character of pagedCharacters"
+      [routerLink]="['/character', character.id]"
+      class="character-card"
+      [attr.data-status]="character.status.toLowerCase()"
+    >
+      <div class="card-image-wrapper">
+        <img [src]="character.image" [alt]="character.name" class="card-image" />
+        <div class="card-image-overlay"></div>
+        <span class="status-badge" [ngClass]="'status-' + character.status.toLowerCase()">
+          <span class="status-dot"></span>{{ character.status }}
+        </span>
+      </div>
+
+      <div class="card-body">
+        <h2 class="card-name">{{ character.name }}</h2>
+        <p class="card-species">{{ character.species }} &middot; {{ character.gender }}</p>
+
+        <div class="card-info">
+          <div class="info-row">
+            <span class="info-label">Última ubicación</span>
+            <span class="info-value">{{ character.location?.name }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Primer episodio</span>
+            <span class="info-value episode-value">{{ firstEpisodes[character.id] || '...' }}</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <span class="card-id">#{{ character.id | number:'3.0-0' }}</span>
+          <span class="card-cta">Ver perfil →</span>
+        </div>
+      </div>
+
+      <div class="card-portal-glow"></div>
+    </a>
+  </main>
+  <!-- Paginación -->
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">‹</button>
+
+    <ng-container *ngFor="let p of pages">
+      <button
+        class="page-btn"
+        [class.page-btn--active]="p === currentPage"
+        (click)="goToPage(p)">
+        {{ p }}
+      </button>
+    </ng-container>
+
+    <button class="page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">›</button>
+  </div>
+
+  <!-- Sin resultados -->
+  <div class="no-results" *ngIf="filteredCharacters.length === 0">
+    <div class="no-results-icon">🛸</div>
+    <p class="no-results-text">No se encontraron personajes</p>
+    <button class="reset-btn" (click)="resetFilters()">Limpiar filtros</button>
+  </div>
+
 </div>

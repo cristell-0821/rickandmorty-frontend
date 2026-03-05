@@ -11,6 +11,7 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 @Component({
   selector: 'app-character-detail',
   templateUrl: './character-detail.component.html',
+  styleUrls: ['./character-detail.component.css']
 })
 export class CharacterDetailComponent implements OnInit {
   character: Character | undefined;
@@ -21,28 +22,26 @@ export class CharacterDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private characterService: CharacterService
   ) {}
-  
 
   ngOnInit(): void {
-  const id = Number(this.route.snapshot.paramMap.get('id'));
-  this.characterService.getCharacterById(id).subscribe({
-    next: (data) => {
-      this.character = data;
-      this.error = false;
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.characterService.getCharacterById(id).subscribe({
+      next: (data) => {
+        this.character = data;
+        this.error = false;
 
-      const firstEpisodeUrl = data.episode[0];
-      this.characterService.getEpisodeNameByUrl(firstEpisodeUrl).subscribe({
-      next: episodeData => {
-        this.firstEpisodeName = episodeData.name;
+        const firstEpisodeUrl = data.episode[0];
+        this.characterService.getEpisodeNameByUrl(firstEpisodeUrl).subscribe({
+          next: episodeData => {
+            this.firstEpisodeName = episodeData.name;
+          }
+        });
+      },
+      error: () => {
+        this.error = true;
       }
     });
-
-    },
-    error: () => {
-      this.error = true;
-    }
-  });
-}
+  }
 
   getBase64ImageFromURL(url: string): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -52,16 +51,11 @@ export class CharacterDetailComponent implements OnInit {
         const canvas = document.createElement('canvas');
         canvas.width = img.width;
         canvas.height = img.height;
-
         const ctx = canvas.getContext('2d');
         ctx?.drawImage(img, 0, 0);
-
-        const dataURL = canvas.toDataURL('image/jpeg');
-        resolve(dataURL);
+        resolve(canvas.toDataURL('image/jpeg'));
       };
-      img.onerror = error => {
-        reject(error);
-      };
+      img.onerror = error => reject(error);
       img.src = url;
     });
   }
@@ -73,91 +67,70 @@ export class CharacterDetailComponent implements OnInit {
     try {
       const base64Img = await this.getBase64ImageFromURL(character.image);
 
+      const statusColors: { [key: string]: string } = {
+        'Alive':   '#97ce4c',
+        'Dead':    '#e74c3c',
+        'unknown': '#8e8e8e'
+      };
+      const statusColor = statusColors[character.status] || '#8e8e8e';
+
       const docDefinition: any = {
         content: [
+          // Imagen centrada con borde
           {
-            image: base64Img,
-            width: 180,
-            alignment: 'center',
-            margin: [0, 0, 0, 20]
+            stack: [{ image: base64Img, width: 160, alignment: 'center' }],
+            margin: [0, 20, 0, 16]
           },
+          // Nombre
           {
             text: character.name,
-            style: 'header',
+            font: 'Roboto',
+            fontSize: 22,
+            bold: true,
+            color: '#0d1b2a',
             alignment: 'center',
-            margin: [0, 0, 0, 10],
-            color: '#2c3e50'
+            margin: [0, 0, 0, 6]
           },
+          // Especie y género
           {
-            table: {
-              widths: ['*'],
-              body: [
-                [
-                  {
-                    text: `${character.status} - ${character.species}`,
-                    alignment: 'center',
-                    color: 'white',
-                    fillColor: '#27ae60',
-                    bold: true,
-                    fontSize: 12,
-                    margin: [0, 4, 0, 4]
-                  }
-                ]
-              ]
-            },
+            text: `${character.species}  ·  ${character.gender}`,
+            fontSize: 10,
+            color: '#44d7e8',
+            alignment: 'center',
+            margin: [0, 0, 0, 14],
+            characterSpacing: 2
+          },
+          // Badge de status
+          {
+            table: { widths: ['*'], body: [[{
+              text: character.status.toUpperCase(),
+              alignment: 'center',
+              color: '#060b14',
+              fillColor: statusColor,
+              bold: true,
+              fontSize: 10,
+              margin: [0, 5, 0, 5],
+              characterSpacing: 3
+            }]]},
             layout: 'noBorders',
-            margin: [0, 0, 0, 20]
+            margin: [140, 0, 140, 24]
           },
-          {
-            canvas: [
-              {
-                type: 'line',
-                x1: 0,
-                y1: 0,
-                x2: 515,
-                y2: 0,
-                lineWidth: 1,
-                lineColor: '#cccccc'
-              }
-            ],
-            margin: [0, 10, 0, 10]
-          },
-          {
-            columns: [
-              { width: '45%', text: 'Origen:', style: 'label' },
-              { width: '*', text: character.origin.name, style: 'value' }
-            ]
-          },
-          {
-            columns: [
-              { width: '45%', text: 'Última ubicación:', style: 'label' },
-              { width: '*', text: character.location?.name || '-', style: 'value' }
-            ]
-          },
-          {
-            columns: [
-              { width: '45%', text: 'Primera aparición:', style: 'label' },
-              { width: '*', text: this.firstEpisodeName || '-', style: 'value' }
-            ]
-          }
+          // Línea separadora
+          { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.5, lineColor: '#44d7e8' }], margin: [0, 0, 0, 20] },
+          // Datos
+          { columns: [{ width: '45%', text: 'ORIGEN', style: 'label' },         { width: '*', text: character.origin.name,             style: 'value' }], margin: [0, 0, 0, 12] },
+          { columns: [{ width: '45%', text: 'ÚLTIMA UBICACIÓN', style: 'label'},  { width: '*', text: character.location?.name || '-',    style: 'value' }], margin: [0, 0, 0, 12] },
+          { columns: [{ width: '45%', text: 'PRIMERA APARICIÓN', style: 'label'}, { width: '*', text: this.firstEpisodeName || '-',        style: 'value' }], margin: [0, 0, 0, 12] },
+          { columns: [{ width: '45%', text: 'TOTAL EPISODIOS', style: 'label'},   { width: '*', text: `${character.episode.length}`,       style: 'value' }], margin: [0, 0, 0, 12] },
+          // Footer
+          { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.5, lineColor: '#44d7e8' }], margin: [0, 20, 0, 10] },
+          { text: 'rickandmorty-app  ·  Character Database', fontSize: 8, color: '#2a4a6a', alignment: 'center' }
         ],
         styles: {
-          header: {
-            fontSize: 22,
-            bold: true
-          },
-          label: {
-            fontSize: 11,
-            color: '#7f8c8d',
-            bold: true,
-            margin: [0, 2, 0, 2]
-          },
-          value: {
-            fontSize: 12,
-            color: '#2c3e50',
-            margin: [0, 2, 0, 2]
-          }
-        }
+          label: { fontSize: 9,  color: '#0a8a9f', bold: true, characterSpacing: 1.5 },
+          value: { fontSize: 11, color: '#1a2a3a' }  
+        },
+        pageMargins: [40, 20, 40, 20]
       };
 
       pdfMake.createPdf(docDefinition).download(`${character.name}.pdf`);
