@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class CharacterService {
-  private apiUrl = 'http://localhost:8080/characters';
+  private apiUrl = 'https://rickandmorty-backend-production-7746.up.railway.app/characters';
 
   constructor(private http: HttpClient) {}
 
