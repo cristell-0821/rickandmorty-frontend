@@ -16,7 +16,7 @@ export interface Location {
     gender: string;
     image: string;
     origin: Origin;
-    location: Location;
+    location?: Location;
     episode: string[];
   }
   
