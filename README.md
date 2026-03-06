@@ -1,27 +1,106 @@
-# RickandmortyApp
+# 🛸 RickAPI — Character Explorer
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.1.
+> Buscador de personajes del universo Rick & Morty con filtros, vista de detalle y exportación a PDF.
 
-## Development server
+🔗 **Demo en vivo:** [rickandmorty-frontend-omega.vercel.app](https://rickandmorty-frontend-omega.vercel.app)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+---
 
-## Code scaffolding
+## ✨ Features
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- 🌌 Fondo animado de estrellas tipo hyperspace con canvas
+- 🔍 Búsqueda de personajes por nombre en tiempo real
+- 🏷️ Filtros por estado (Alive / Dead / Unknown) y especie
+- 📊 Contador de resultados dinámico
+- 📄 Paginación de personajes
+- 👤 Vista de detalle por personaje con datos completos
+- 🖨️ Exportación de ficha del personaje a PDF
+- 📱 Diseño responsivo
 
-## Build
+---
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## 🖼️ Preview
 
-## Running unit tests
+| Home | Detalle |
+|------|---------|
+| Grid de personajes con filtros sticky | Vista completa con stats y descarga PDF |
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+---
 
-## Running end-to-end tests
+## 🛠️ Stack
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+| Capa | Tecnología |
+|------|-----------|
+| Frontend | Angular 17 |
+| Backend | Spring Boot (Java) |
+| API externa | [Rick and Morty API](https://rickandmortyapi.com) |
+| PDF | PdfMake |
+| Deploy Frontend | Vercel |
+| Deploy Backend | Railway |
 
-## Further help
+---
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## 🚀 Correr en local
+
+### Backend
+
+```bash
+# Clonar el repo
+git clone https://github.com/cristell-0821/rickandmorty-backend.git
+cd rickandmorty-backend
+
+# Levantar con Maven
+./mvnw spring-boot:run
+```
+
+El backend corre en `http://localhost:8080`
+
+### Frontend
+
+```bash
+# Clonar el repo
+git clone https://github.com/cristell-0821/rickandmorty-frontend.git
+cd rickandmorty-frontend
+
+# Instalar dependencias
+npm install
+
+# Levantar
+ng serve
+```
+
+El frontend corre en `http://localhost:4200`
+
+> ⚠️ Asegúrate de que el backend esté corriendo antes de levantar el frontend.
+
+---
+
+## 📁 Estructura del proyecto
+
+```
+src/
+├── app/
+│   ├── home/                  # Lista de personajes + filtros
+│   ├── character-detail/      # Vista de detalle + PDF
+│   ├── services/              # CharacterService (HTTP)
+│   ├── character.model.ts     # Interface Character
+│   └── app.component.*        # Starfield canvas + router
+└── assets/
+    └── img/
+        └── titulo.webp
+```
+
+---
+
+## 🌐 Deploy
+
+| Servicio | URL |
+|---------|-----|
+| Frontend (Vercel) | [rickandmorty-frontend-omega.vercel.app](https://rickandmorty-frontend-omega.vercel.app) |
+| Backend (Railway) | [rickandmorty-backend-production-7746.up.railway.app](https://rickandmorty-backend-production-7746.up.railway.app) |
+
+---
+
+## 👩‍💻 Autora
+
+**Cristell** — [github.com/cristell-0821](https://github.com/cristell-0821)
