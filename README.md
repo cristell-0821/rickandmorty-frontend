@@ -1,6 +1,6 @@
-# 🛸 RickAPI — Character Explorer
+# 🛸 RickAndMorty — Character Explorer & Memory Game
 
-> Buscador de personajes del universo Rick & Morty con filtros, vista de detalle y exportación a PDF.
+> App interactiva del universo Rick & Morty con buscador de personajes y juego de memoria.
 
 🔗 **Demo en vivo:** [rickandmorty-frontend-omega.vercel.app](https://rickandmorty-frontend-omega.vercel.app)
 
@@ -8,22 +8,33 @@
 
 ## ✨ Features
 
+### 🔍 Buscador de Personajes
 - 🌌 Fondo animado de estrellas tipo hyperspace con canvas
-- 🔍 Búsqueda de personajes por nombre en tiempo real
+- 🔍 Búsqueda por nombre en tiempo real
 - 🏷️ Filtros por estado (Alive / Dead / Unknown) y especie
 - 📊 Contador de resultados dinámico
 - 📄 Paginación de personajes
-- 👤 Vista de detalle por personaje con datos completos
+- 👤 Vista de detalle por personaje con stats completos
 - 🖨️ Exportación de ficha del personaje a PDF
+
+### 🎮 Juego de Memoria
+- 3 niveles de dificultad: Fácil (4×3), Normal (4×4), Difícil (6×4)
+- Cronómetro y contador de intentos en tiempo real
+- Barra de progreso de pares encontrados
+- Pantalla de victoria con puntaje calculado
+- Cards con flip animation y personajes reales de la API
+
+### General
 - 📱 Diseño responsivo
+- 🎨 UI oscura estilo galaxia coherente en toda la app
 
 ---
 
 ## 🖼️ Preview
 
-| Home | Detalle |
-|------|---------|
-| Grid de personajes con filtros sticky | Vista completa con stats y descarga PDF |
+| Landing | Buscador | Detalle | Memoria |
+|---------|----------|---------|---------|
+| Selección de modo | Grid con filtros sticky | Stats + descarga PDF | Tablero con flip cards |
 
 ---
 
@@ -80,14 +91,19 @@ El frontend corre en `http://localhost:4200`
 ```
 src/
 ├── app/
-│   ├── home/                  # Lista de personajes + filtros
-│   ├── character-detail/      # Vista de detalle + PDF
+│   ├── landing/               # Pantalla principal con selección de modo
+│   ├── home/                  # Buscador de personajes + filtros
+│   ├── character-detail/      # Vista de detalle + exportación PDF
+│   ├── memory/                # Juego de memoria
 │   ├── services/              # CharacterService (HTTP)
 │   ├── character.model.ts     # Interface Character
 │   └── app.component.*        # Starfield canvas + router
 └── assets/
     └── img/
-        └── titulo.webp
+        ├── titulo.webp
+        ├── portal.png
+        ├── buscador.jpg
+        └── memoria.jpg
 ```
 
 ---
