@@ -8,13 +8,17 @@ import { HomeComponent } from './home/home.component';
 import { CharacterDetailComponent } from './character-detail/character-detail.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { FormsModule } from '@angular/forms';
+import { LandingComponent } from './landing/landing.component';
+import { MemoryComponent } from './memory/memory.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     CharacterDetailComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    LandingComponent,
+    MemoryComponent
   ],
   imports: [
     BrowserModule,

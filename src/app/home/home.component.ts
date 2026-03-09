@@ -33,9 +33,11 @@ export class HomeComponent implements OnInit {
     this.speciesOpen = false;
     this.applyFilters();
   }
+  isLoading: boolean = true; 
 
   ngOnInit(): void {
     this.characterService.getCharacters().subscribe(data => {
+      this.isLoading = false;
       this.characters = data;
       this.filteredCharacters = [...data];
 

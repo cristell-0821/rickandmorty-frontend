@@ -1,0 +1,126 @@
+<div class="memory-wrapper">
+
+  <!-- Botón volver -->
+  <a routerLink="/" class="back-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M19 12H5M12 5l-7 7 7 7"/>
+    </svg>
+    Volver
+  </a>
+
+  <!-- ===== PANTALLA SELECCIÓN DE DIFICULTAD ===== -->
+  <div class="difficulty-screen" *ngIf="gameState === 'selecting'">
+
+    <h1 class="memory-title">Juego de Memoria</h1>
+    <img src="assets/img/portal.png" alt="Portal" class="portal-img" />
+    <p class="memory-subtitle">Selecciona la dificultad</p>
+
+    <div class="difficulty-cards">
+
+      <button class="diff-card" [class.diff-card--active]="difficulty === 'easy'" (click)="selectDifficulty('easy')">
+        <span class="diff-icon">🟢</span>
+        <span class="diff-label">{{ config.easy.label }}</span>
+        <span class="diff-desc">4×3 · 6 pares</span>
+      </button>
+
+      <button class="diff-card" [class.diff-card--active]="difficulty === 'normal'" (click)="selectDifficulty('normal')">
+        <span class="diff-icon">🟡</span>
+        <span class="diff-label">{{ config.normal.label }}</span>
+        <span class="diff-desc">4×4 · 8 pares</span>
+      </button>
+
+      <button class="diff-card" [class.diff-card--active]="difficulty === 'hard'" (click)="selectDifficulty('hard')">
+        <span class="diff-icon">🔴</span>
+        <span class="diff-label">{{ config.hard.label }}</span>
+        <span class="diff-desc">6×4 · 12 pares</span>
+      </button>
+
+    </div>
+
+    <button class="start-btn" (click)="startGame()">Iniciar juego →</button>
+
+  </div>
+
+  <!-- ===== PANTALLA DE JUEGO ===== -->
+  <div class="game-screen" *ngIf="gameState === 'playing'">
+
+    <!-- HUD -->
+    <div class="hud">
+      <div class="hud-stat">
+        <span class="hud-label">Intentos</span>
+        <span class="hud-value">{{ attempts }}</span>
+      </div>
+      <div class="hud-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="progressPercent"></div>
+        </div>
+        <span class="progress-text">{{ matchedPairs }}/{{ totalPairs }} pares</span>
+      </div>
+      <div class="hud-stat">
+        <span class="hud-label">Tiempo</span>
+        <span class="hud-value hud-timer">{{ formattedTime }}</span>
+      </div>
+    </div>
+    <!-- Loading -->
+    <div class="board-loading" *ngIf="isLoadingCards">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Cargando personajes...</p>
+    </div>
+
+    <!-- Tablero -->
+    <div class="board" *ngIf="!isLoadingCards" [style.grid-template-columns]="'repeat(' + cols + ', 1fr)'">
+      <div
+        *ngFor="let card of cards"
+        class="memory-card"
+        [class.is-flipped]="card.flipped || card.matched"
+        [class.is-matched]="card.matched"
+        (click)="flipCard(card)"
+      >
+        <div class="memory-card__inner">
+          <!-- Dorso -->
+          <div class="memory-card__back">
+            <span class="card-question">?</span>
+          </div>
+          <!-- Frente -->
+          <div class="memory-card__front">
+            <img [src]="card.image" [alt]="card.name" />
+            <span class="card-name">{{ card.name }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón reiniciar -->
+    <button class="restart-btn" (click)="restartGame()">↩ Cambiar dificultad</button>
+
+  </div>
+
+  <!-- ===== PANTALLA DE VICTORIA ===== -->
+  <div class="won-screen" *ngIf="gameState === 'won'">
+    <div class="won-content">
+      <div class="won-icon">🎉</div>
+      <h2 class="won-title">¡Completado!</h2>
+
+      <div class="won-stats">
+        <div class="won-stat">
+          <span class="won-stat__label">Tiempo</span>
+          <span class="won-stat__value">{{ formattedTime }}</span>
+        </div>
+        <div class="won-stat">
+          <span class="won-stat__label">Intentos</span>
+          <span class="won-stat__value">{{ attempts }}</span>
+        </div>
+        <div class="won-stat won-stat--score">
+          <span class="won-stat__label">Puntaje</span>
+          <span class="won-stat__value">{{ finalScore }}</span>
+        </div>
+      </div>
+
+      <div class="won-actions">
+        <button class="start-btn" (click)="playAgain()">Jugar de nuevo</button>
+        <button class="restart-btn" (click)="restartGame()">Cambiar dificultad</button>
+      </div>
+    </div>
+  </div>
+
+</div>

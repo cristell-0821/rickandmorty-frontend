@@ -17,6 +17,8 @@
   min-height: 100vh;
   padding-bottom: 60px;
   font-family: 'Exo 2', sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ===================== HEADER ===================== */
@@ -81,12 +83,7 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(4, 10, 24, 0.92);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(68, 215, 232, 0.15);
-  border-top: 1px solid rgba(68, 215, 232, 0.08);
   padding: 14px 24px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
 }
 
 .filters-inner {
@@ -580,3 +577,20 @@
   font-weight: 600;
   border-left: 2px solid var(--rm-cyan);
 }
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(68, 215, 232, 0.7);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 40px 0 0 40px;
+  transition: color 0.2s, gap 0.2s;
+}
+.back-btn:visited { color: rgba(68, 215, 232, 0.7); }
+.back-btn svg { width: 16px; height: 16px; transition: transform 0.2s; }
+.back-btn:hover { color: rgb(249, 249, 249); gap: 12px; }
+.back-btn:hover svg { transform: translateX(-3px); }
