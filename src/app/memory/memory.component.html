@@ -38,6 +38,38 @@
     </div>
 
     <button class="start-btn" (click)="startGame()">Iniciar juego →</button>
+    <div class="section-divider">
+      <span>🡫 Récords e historial</span>
+    </div>
+    <!-- Récords por dificultad -->
+    <div class="records-row">
+      <div *ngFor="let d of difficulties" class="record-chip" [class.record-chip--active]="difficulty === d">
+        <span class="record-chip__label">{{ config[d].label }}</span>
+        <span class="record-chip__score" *ngIf="getBestForDifficulty(d)">
+          🏆 {{ getBestForDifficulty(d)?.score }}
+        </span>
+        <span class="record-chip__score record-chip__empty" *ngIf="!getBestForDifficulty(d)">
+          Sin récord
+        </span>
+      </div>
+    </div>
+
+    <!-- Historial reciente -->
+    <div class="history-section" *ngIf="history.length > 0">
+      <div class="history-header">
+        <span class="history-title">Últimas partidas</span>
+        <button class="history-clear" (click)="clearHistory()">Limpiar</button>
+      </div>
+      <div class="history-list">
+        <div *ngFor="let r of history" class="history-row">
+          <span class="history-diff" [attr.data-diff]="r.difficulty">{{ r.difficultyLabel }}</span>
+          <span class="history-score">{{ r.score }} pts</span>
+          <span class="history-time">⏱ {{ r.time }}</span>
+          <span class="history-attempts">🎯 {{ r.attempts }}</span>
+          <span class="history-date">{{ r.date }}</span>
+        </div>
+      </div>
+    </div>
 
   </div>
 
@@ -74,6 +106,7 @@
         class="memory-card"
         [class.is-flipped]="card.flipped || card.matched"
         [class.is-matched]="card.matched"
+        [class.is-mismatch]="mismatchIds.has(card.id)"
         (click)="flipCard(card)"
       >
         <div class="memory-card__inner">
@@ -97,9 +130,14 @@
 
   <!-- ===== PANTALLA DE VICTORIA ===== -->
   <div class="won-screen" *ngIf="gameState === 'won'">
+    <canvas #confettiCanvas class="confetti-canvas"></canvas>
     <div class="won-content">
       <div class="won-icon">🎉</div>
       <h2 class="won-title">¡Completado!</h2>
+      <!-- Badge nuevo récord -->
+      <div class="new-record-badge" *ngIf="isNewRecord">
+        🏆 ¡Nuevo récord personal!
+      </div>
 
       <div class="won-stats">
         <div class="won-stat">
@@ -114,6 +152,11 @@
           <span class="won-stat__label">Puntaje</span>
           <span class="won-stat__value">{{ finalScore }}</span>
         </div>
+      </div>
+      <!-- Mejor puntaje anterior -->
+      <div class="prev-record" *ngIf="getBestForDifficulty(difficulty) && !isNewRecord">
+        <span class="prev-record__label">Tu récord en {{ config[difficulty].label }}</span>
+        <span class="prev-record__value">🏆 {{ getBestForDifficulty(difficulty)?.score }} pts</span>
       </div>
 
       <div class="won-actions">

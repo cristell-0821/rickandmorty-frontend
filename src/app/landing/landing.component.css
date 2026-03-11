@@ -37,7 +37,7 @@
   font-weight: 300;
   letter-spacing: 0.5em;
   text-transform: uppercase;
-  color: var(--rm-green);
+  color: rgba(68, 186, 232, 0.638);
   margin-top: 16px;
   opacity: 0.8;
 }
