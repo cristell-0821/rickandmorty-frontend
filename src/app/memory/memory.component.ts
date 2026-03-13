@@ -115,6 +115,8 @@ export class MemoryComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadHistory();
+    const img = new Image();
+    img.src = 'assets/img/portal.png';
   }
 
   ngOnDestroy(): void {
