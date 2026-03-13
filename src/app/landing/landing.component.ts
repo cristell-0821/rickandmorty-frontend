@@ -6,5 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./landing.component.css']
 })
 export class LandingComponent {
-
+  logoLoaded: boolean = false;
+  memoriaLoaded: boolean = false;
+  buscadorLoaded: boolean = false;
 }

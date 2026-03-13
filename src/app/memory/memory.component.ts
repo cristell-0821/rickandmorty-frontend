@@ -59,6 +59,8 @@ export class MemoryComponent implements OnInit, OnDestroy {
   @ViewChild('confettiCanvas') confettiCanvas!: ElementRef<HTMLCanvasElement>;
   private confettiAnimFrame: any;
 
+  portalLoaded: boolean = false;
+
   launchConfetti(): void {
     setTimeout(() => {
       const canvas = this.confettiCanvas?.nativeElement;

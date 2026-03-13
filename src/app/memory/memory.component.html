@@ -21,8 +21,14 @@
   <!-- ===== PANTALLA SELECCIÓN DE DIFICULTAD ===== -->
   <div class="difficulty-screen" *ngIf="gameState === 'selecting'">
 
+    <img 
+      src="/assets/img/portal.png" 
+      alt="Portal" 
+      class="portal-img"
+      (load)="portalLoaded = true"
+      [class.portal-img--hidden]="!portalLoaded"
+    />
     <h1 class="memory-title">Juego de Memoria</h1>
-    <img src="/assets/img/portal.png" alt="Portal" class="portal-img" />
     <p class="memory-subtitle">Selecciona la dificultad</p>
 
     <div class="difficulty-cards">

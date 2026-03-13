@@ -2,7 +2,10 @@
 
   <!-- Logo -->
   <div class="landing-logo">
-    <img src="assets/img/titulo.webp" alt="Rick and Morty" class="landing-title-img" />
+    <img src="assets/img/titulo.webp" alt="Rick and Morty" 
+      class="landing-title-img"
+      (load)="logoLoaded = true"
+      [class.img--hidden]="!logoLoaded" />
     <p class="landing-subtitle">Elige tu experiencia</p>
   </div>
 
@@ -11,7 +14,10 @@
 
     <a routerLink="/memory" class="mode-card mode-card--memory">
       <div class="mode-card__icon">
-        <img src="assets/img/memoria.png" alt="Memoria" class="mode-icon-img" />
+        <img src="assets/img/memoria.png" alt="Memoria" 
+          class="mode-icon-img"
+          (load)="memoriaLoaded = true"
+          [class.img--hidden]="!memoriaLoaded" />
       </div>
       <h2 class="mode-card__title">Juego de Memoria</h2>
       <p class="mode-card__desc">Encuentra todos los pares de personajes. ¡Pon a prueba tu memoria con distintas dificultades!</p>
@@ -21,7 +27,10 @@
 
     <a routerLink="/characters" class="mode-card">
       <div class="mode-card__icon">
-        <img src="assets/img/buscador.png" alt="Buscador" class="mode-icon-img" />
+        <img src="assets/img/buscador.png" alt="Buscador" 
+          class="mode-icon-img"
+          (load)="buscadorLoaded = true"
+          [class.img--hidden]="!buscadorLoaded" />
       </div>
       <h2 class="mode-card__title">Buscador</h2>
       <p class="mode-card__desc">Explora todos los personajes del universo Rick & Morty. Filtra por nombre, estado y especie.</p>

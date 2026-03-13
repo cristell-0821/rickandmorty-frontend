@@ -25,6 +25,7 @@
   filter: drop-shadow(0 0 24px rgba(68,215,232,0.7))
           drop-shadow(0 0 60px rgba(68,215,232,0.3));
   animation: floatLogo 4s ease-in-out infinite;
+  transition: opacity 0.4s ease;
 }
 
 @keyframes floatLogo {
@@ -173,4 +174,8 @@
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
+  transition: opacity 0.3s ease;
+}
+.img--hidden {
+  opacity: 0;
 }
