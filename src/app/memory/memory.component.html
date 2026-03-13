@@ -1,7 +1,17 @@
 <div class="memory-wrapper">
 
-  <!-- Botón volver -->
-  <a class="back-btn" (click)="restartGame()">
+  <!-- Botón volver — comportamiento según pantalla activa -->
+
+  <!-- En juego: vuelve a selección de dificultad -->
+  <a class="back-btn" *ngIf="gameState === 'playing'" (click)="restartGame()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M19 12H5M12 5l-7 7 7 7"/>
+    </svg>
+    Volver
+  </a>
+
+  <!-- En selección o won: navega hacia atrás (pantalla principal) -->
+  <a class="back-btn" *ngIf="gameState === 'selecting' || gameState === 'won'" routerLink="/">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
       <path d="M19 12H5M12 5l-7 7 7 7"/>
     </svg>
