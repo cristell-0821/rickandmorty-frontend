@@ -5,13 +5,15 @@ import { HomeComponent } from './home/home.component';
 import { CharacterDetailComponent } from './character-detail/character-detail.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { MemoryComponent } from './memory/memory.component';
+import { RankingComponent } from './ranking/ranking.component';
 
 const routes: Routes = [
   { path: '', component: LandingComponent },
   { path: 'characters', component: HomeComponent },
   { path: 'character/:id', component: CharacterDetailComponent },
   { path: 'memory', component: MemoryComponent },
-  { path: '**', component: PageNotFoundComponent }
+  { path: 'ranking', component: RankingComponent },
+  { path: '**', component: PageNotFoundComponent },
 ];
 
 @NgModule({

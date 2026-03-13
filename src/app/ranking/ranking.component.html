@@ -1,0 +1,62 @@
+<div class="ranking-wrapper">
+
+  <a routerLink="/memory" class="back-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M19 12H5M12 5l-7 7 7 7"/>
+    </svg>
+    Volver
+  </a>
+
+  <div class="ranking-header">
+    <h1 class="ranking-title">🏆 Ranking Global</h1>
+    <p class="ranking-subtitle">Top 10 mejores puntajes</p>
+  </div>
+
+  <!-- Tabs de dificultad -->
+  <div class="diff-tabs">
+    <button
+      *ngFor="let d of difficulties"
+      class="diff-tab"
+      [class.diff-tab--active]="selectedDifficulty === d.key"
+      (click)="selectDifficulty(d.key)">
+      {{ d.label }}
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div class="ranking-loading" *ngIf="isLoading">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Cargando ranking...</p>
+  </div>
+
+  <!-- Tabla -->
+  <div class="ranking-table" *ngIf="!isLoading">
+
+    <!-- Sin datos -->
+    <div class="ranking-empty" *ngIf="rankings.length === 0">
+      <p class="empty-icon">🛸</p>
+      <p class="empty-text">Nadie ha jugado en este modo aún</p>
+      <p class="empty-sub">¡Sé el primero en entrar al ranking!</p>
+    </div>
+
+    <!-- Filas -->
+    <div
+      *ngFor="let entry of rankings; let i = index"
+      class="ranking-row"
+      [class.ranking-row--top3]="i < 3">
+
+      <span class="rank-medal">{{ getMedalIcon(i) }}</span>
+
+      <span class="rank-apodo">{{ entry.apodo }}</span>
+
+      <div class="rank-stats">
+        <span class="rank-score">{{ entry.score }} pts</span>
+        <span class="rank-detail">⏱ {{ entry.time }} · 🎯 {{ entry.attempts }}</span>
+      </div>
+
+      <span class="rank-date">{{ entry.date }}</span>
+    </div>
+
+  </div>
+
+</div>

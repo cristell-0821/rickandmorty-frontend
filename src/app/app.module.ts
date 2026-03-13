@@ -11,6 +11,9 @@ import { FormsModule } from '@angular/forms';
 import { LandingComponent } from './landing/landing.component';
 import { MemoryComponent } from './memory/memory.component';
 
+import { environment } from '../environments/environment';
+import { RankingComponent } from './ranking/ranking.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -18,7 +21,8 @@ import { MemoryComponent } from './memory/memory.component';
     CharacterDetailComponent,
     PageNotFoundComponent,
     LandingComponent,
-    MemoryComponent
+    MemoryComponent,
+    RankingComponent
   ],
   imports: [
     BrowserModule,

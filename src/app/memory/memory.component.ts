@@ -1,5 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { CharacterService } from '../services/character.service';
+import { RankingService } from '../services/ranking.service';
+import { AuthService } from '../services/auth.service';
+import { User } from 'firebase/auth';
 
 export type Difficulty = 'easy' | 'normal' | 'hard';
 
@@ -55,68 +58,37 @@ export class MemoryComponent implements OnInit, OnDestroy {
   isNewRecord: boolean = false;
   isLoadingCards: boolean = false;
 
+  currentUser: User | null = null;
+  isLoggingIn: boolean = false;
+
   mismatchIds: Set<number> = new Set();
   @ViewChild('confettiCanvas') confettiCanvas!: ElementRef<HTMLCanvasElement>;
   private confettiAnimFrame: any;
 
   portalLoaded: boolean = false;
 
-  launchConfetti(): void {
-    setTimeout(() => {
-      const canvas = this.confettiCanvas?.nativeElement;
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d')!;
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+  // Ranking
+  apodo: string = '';
+  apodoGuardado: boolean = false;
+  isSavingScore: boolean = false;
 
-      const colors = ['#97ce4c', '#44d7e8', '#ffffff', '#f39c12', '#e74c3c'];
-      const pieces = Array.from({ length: 120 }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * -canvas.height,
-        r: Math.random() * 6 + 3,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        speed: Math.random() * 3 + 2,
-        angle: Math.random() * 360,
-        spin: Math.random() * 4 - 2,
-        opacity: 1
-      }));
-
-      const draw = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        pieces.forEach(p => {
-          ctx.save();
-          ctx.globalAlpha = p.opacity;
-          ctx.fillStyle = p.color;
-          ctx.translate(p.x, p.y);
-          ctx.rotate((p.angle * Math.PI) / 180);
-          ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 2.5);
-          ctx.restore();
-          p.y += p.speed;
-          p.angle += p.spin;
-          if (p.y > canvas.height) {
-            p.y = -10;
-            p.opacity -= 0.015;
-          }
-        });
-        if (pieces.some(p => p.opacity > 0)) {
-          this.confettiAnimFrame = requestAnimationFrame(draw);
-        }
-      };
-      draw();
-    }, 650); // espera a que aparezca la pantalla won
-  }
-
-  // Historial
   history: GameRecord[] = [];
   bestScores: { [key in Difficulty]?: GameRecord } = {};
 
   difficulties: Difficulty[] = ['easy', 'normal', 'hard'];
   config = DIFFICULTY_CONFIG;
 
-  constructor(private characterService: CharacterService) {}
+  constructor(
+    private characterService: CharacterService,
+    private rankingService: RankingService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.loadHistory();
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    });
     const img = new Image();
     img.src = 'assets/img/portal.png';
   }
@@ -125,6 +97,62 @@ export class MemoryComponent implements OnInit, OnDestroy {
     this.stopTimer();
     this.audioCtx?.close();
     if (this.confettiAnimFrame) cancelAnimationFrame(this.confettiAnimFrame);
+  }
+
+  // ===================== RANKING =====================
+  async loginAndSave(): Promise<void> {
+    this.isLoggingIn = true;
+    const user = await this.authService.loginWithGoogle();
+    this.isLoggingIn = false;
+    if (user) {
+      await this.saveToRanking(user);
+    }
+  }
+
+  async saveToRanking(user: User): Promise<void> {
+    this.isSavingScore = true;
+    await this.rankingService.saveScore({
+      apodo: user.displayName || 'Anónimo',
+      score: this.finalScore,
+      difficulty: this.difficulty,
+      difficultyLabel: DIFFICULTY_CONFIG[this.difficulty].label,
+      time: this.formattedTime,
+      attempts: this.attempts,
+      date: new Date().toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: '2-digit' })
+    });
+    this.isSavingScore = false;
+    this.apodoGuardado = true;
+  }
+
+  // Stats tabs
+  statsTab: 'personal' | 'global' = 'personal';
+  globalDifficulty: Difficulty = 'normal';
+  globalRankings: any[] = [];
+  isLoadingGlobal: boolean = false;
+
+  setStatsTab(tab: 'personal' | 'global'): void {
+    this.statsTab = tab;
+    if (tab === 'global') {
+      this.loadGlobalRanking();
+    }
+  }
+
+  setGlobalDifficulty(d: Difficulty): void {
+    this.globalDifficulty = d;
+    this.loadGlobalRanking();
+  }
+
+  async loadGlobalRanking(): Promise<void> {
+    this.isLoadingGlobal = true;
+    this.globalRankings = await this.rankingService.getTopByDifficulty(this.globalDifficulty);
+    this.isLoadingGlobal = false;
+  }
+
+  getMedalIcon(index: number): string {
+    if (index === 0) return '🥇';
+    if (index === 1) return '🥈';
+    if (index === 2) return '🥉';
+    return `#${index + 1}`;
   }
 
   // ===================== SONIDOS =====================
@@ -198,6 +226,53 @@ export class MemoryComponent implements OnInit, OnDestroy {
     });
   }
 
+  // ===================== CONFETTI =====================
+
+  launchConfetti(): void {
+    setTimeout(() => {
+      const canvas = this.confettiCanvas?.nativeElement;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d')!;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const colors = ['#97ce4c', '#44d7e8', '#ffffff', '#f39c12', '#e74c3c'];
+      const pieces = Array.from({ length: 120 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * -canvas.height,
+        r: Math.random() * 6 + 3,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        speed: Math.random() * 3 + 2,
+        angle: Math.random() * 360,
+        spin: Math.random() * 4 - 2,
+        opacity: 1
+      }));
+
+      const draw = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+          ctx.save();
+          ctx.globalAlpha = p.opacity;
+          ctx.fillStyle = p.color;
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.angle * Math.PI) / 180);
+          ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 2.5);
+          ctx.restore();
+          p.y += p.speed;
+          p.angle += p.spin;
+          if (p.y > canvas.height) {
+            p.y = -10;
+            p.opacity -= 0.015;
+          }
+        });
+        if (pieces.some(p => p.opacity > 0)) {
+          this.confettiAnimFrame = requestAnimationFrame(draw);
+        }
+      };
+      draw();
+    }, 650);
+  }
+
   // ===================== HISTORIAL =====================
 
   loadHistory(): void {
@@ -237,7 +312,6 @@ export class MemoryComponent implements OnInit, OnDestroy {
       date: new Date().toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: '2-digit' })
     };
 
-    // Mantener solo las últimas 5 partidas
     this.history.unshift(record);
     if (this.history.length > 5) this.history = this.history.slice(0, 5);
 
@@ -272,6 +346,8 @@ export class MemoryComponent implements OnInit, OnDestroy {
     this.lockBoard = false;
     this.isLoadingCards = true;
     this.isNewRecord = false;
+    this.apodo = '';
+    this.apodoGuardado = false;
     this.gameState = 'playing';
 
     this.characterService.getCharacters().subscribe(data => {
@@ -312,10 +388,10 @@ export class MemoryComponent implements OnInit, OnDestroy {
         this.stopTimer();
         this.calculateScore();
         this.addRecord();
-        this.playWinSound(); 
+        this.playWinSound();
         setTimeout(() => {
           this.gameState = 'won';
-          this.launchConfetti(); 
+          this.launchConfetti();
         }, 600);
       }
     } else {
@@ -327,12 +403,6 @@ export class MemoryComponent implements OnInit, OnDestroy {
         b.flipped = false;
         this.mismatchIds.delete(a.id);
         this.mismatchIds.delete(b.id);
-        this.flippedCards = [];
-        this.lockBoard = false;
-      }, 1000);
-      setTimeout(() => {
-        a.flipped = false;
-        b.flipped = false;
         this.flippedCards = [];
         this.lockBoard = false;
       }, 1000);

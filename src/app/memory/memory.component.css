@@ -708,3 +708,223 @@
   .card-question { font-size: 1.3rem; }
   .memory-card__inner { border-radius: 10px; }
 }
+/* ===================== RANKING SAVE ===================== */
+.ranking-save {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.ranking-save__label {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.781);
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+.ranking-save__row {
+  display: flex;
+  gap: 8px;
+}
+.apodo-input {
+  background: rgba(68,215,232,0.06);
+  border: 1px solid rgba(68,215,232,0.25);
+  border-radius: 8px;
+  padding: 9px 14px;
+  color: #fff;
+  font-family: 'Exo 2', sans-serif;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 160px;
+}
+.apodo-input::placeholder { color: rgba(255, 255, 255, 0.534); }
+.apodo-input:focus { border-color: rgba(68,215,232,0.6); }
+
+.save-score-btn {
+  padding: 9px 18px;
+  background: rgba(151,206,76,0.12);
+  border: 1px solid rgba(151,206,76,0.4);
+  border-radius: 8px;
+  color: #fff;
+  font-family: 'Exo 2', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.save-score-btn:hover:not([disabled]) {
+  background: rgba(152, 206, 76, 0.4);
+  border-color: var(--rm-green);
+}
+.save-score-btn[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Confirmación */
+.ranking-saved {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.ranking-saved__text {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.793);
+  margin: 0;
+}
+.ranking-saved__text strong { color: var(--rm-green); }
+
+.view-ranking-btn {
+  padding: 10px 24px;
+  background: rgba(68,215,232,0.1);
+  border: 1px solid rgba(68,215,232,0.3);
+  border-radius: 8px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.view-ranking-btn:hover {
+  background: rgba(68,215,232,0.2);
+  border-color: var(--rm-cyan);
+  color: #fff;
+}
+/* Google btn */
+.google-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: #fff;
+  border: none;
+  border-radius: 8px;
+  color: #3c4043;
+  font-family: 'Exo 2', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.google-btn:hover:not([disabled]) {
+  background: #f1f3f4;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.google-btn[disabled] { opacity: 0.6; cursor: not-allowed; }
+
+.omitir-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.526);
+  font-family: 'Exo 2', sans-serif;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 10px;
+}
+.omitir-btn:hover { color: rgba(255,255,255,0.6); }
+
+/* Usuario logueado */
+.ranking-save__logged {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid rgba(68,215,232,0.4);
+}
+.user-name {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.8);
+  font-weight: 600;
+}
+/* ===================== STATS TABS ===================== */
+.stats-tabs {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  max-width: 560px;
+}
+
+.stats-tab {
+  flex: 1;
+  padding: 9px;
+  border-radius: 8px;
+  border: 1px solid rgba(68,215,232,0.2);
+  background: rgba(68,215,232,0.04);
+  color: rgba(255,255,255,0.5);
+  font-family: 'Exo 2', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.stats-tab:hover { border-color: rgba(68,215,232,0.4); color: #fff; }
+.stats-tab--active {
+  border-color: var(--rm-cyan);
+  background: rgba(68,215,232,0.12);
+  color: #fff;
+}
+
+/* Global diff tabs */
+.global-diff-tabs {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  max-width: 560px;
+}
+.global-diff-tab {
+  flex: 1;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: transparent;
+  color: rgba(255,255,255,0.4);
+  font-family: 'Exo 2', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.global-diff-tab--active {
+  border-color: rgba(68,215,232,0.4);
+  background: rgba(68,215,232,0.08);
+  color: #fff;
+}
+
+/* Rank medal */
+.rank-medal {
+  font-size: 1rem;
+  min-width: 28px;
+  text-align: center;
+}
+.rank-apodo {
+  font-weight: 700;
+  color: #fff !important;
+  flex: 1;
+}
+.ranking-row--top3 {
+  border-color: rgba(255,215,0,0.2) !important;
+  background: rgba(255,215,0,0.04) !important;
+}
+
+/* No history */
+.no-history {
+  text-align: center;
+  padding: 24px;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.3);
+}
+
+/* Ranking loading */
+.ranking-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 30px 0;
+}
