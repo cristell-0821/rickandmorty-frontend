@@ -1,7 +1,7 @@
 <div class="memory-wrapper">
 
   <!-- Botón volver -->
-  <a routerLink="/" class="back-btn">
+  <a class="back-btn" (click)="restartGame()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
       <path d="M19 12H5M12 5l-7 7 7 7"/>
     </svg>
@@ -100,7 +100,12 @@
     </div>
 
     <!-- Tablero -->
-    <div class="board" *ngIf="!isLoadingCards" [style.grid-template-columns]="'repeat(' + cols + ', 1fr)'">
+    <div class="board"
+     *ngIf="!isLoadingCards"
+     [class.board--easy]="difficulty === 'easy'"
+     [class.board--normal]="difficulty === 'normal'"
+     [class.board--hard]="difficulty === 'hard'"
+     [style.grid-template-columns]="'repeat(' + cols + ', 1fr)'">
       <div
         *ngFor="let card of cards"
         class="memory-card"
@@ -122,10 +127,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Botón reiniciar -->
-    <button class="restart-btn" (click)="restartGame()">↩ Cambiar dificultad</button>
-
   </div>
 
   <!-- ===== PANTALLA DE VICTORIA ===== -->
