@@ -13,6 +13,7 @@ import { MemoryComponent } from './memory/memory.component';
 
 import { environment } from '../environments/environment';
 import { RankingComponent } from './ranking/ranking.component';
+import { MemoryGameComponent } from './memory-game/memory-game.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { RankingComponent } from './ranking/ranking.component';
     PageNotFoundComponent,
     LandingComponent,
     MemoryComponent,
-    RankingComponent
+    RankingComponent,
+    MemoryGameComponent
   ],
   imports: [
     BrowserModule,

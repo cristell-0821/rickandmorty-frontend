@@ -6,12 +6,14 @@ import { CharacterDetailComponent } from './character-detail/character-detail.co
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { MemoryComponent } from './memory/memory.component';
 import { RankingComponent } from './ranking/ranking.component';
+import { MemoryGameComponent } from './memory-game/memory-game.component';
 
 const routes: Routes = [
   { path: '', component: LandingComponent },
   { path: 'characters', component: HomeComponent },
   { path: 'character/:id', component: CharacterDetailComponent },
   { path: 'memory', component: MemoryComponent },
+  { path: 'memory/play', component: MemoryGameComponent },
   { path: 'ranking', component: RankingComponent },
   { path: '**', component: PageNotFoundComponent },
 ];

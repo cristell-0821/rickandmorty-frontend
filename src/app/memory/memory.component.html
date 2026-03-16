@@ -1,275 +1,121 @@
 <div class="memory-wrapper">
 
-  <!-- Botón volver — comportamiento según pantalla activa -->
-
-  <!-- En juego: vuelve a selección de dificultad -->
-  <a class="back-btn" *ngIf="gameState === 'playing'" (click)="restartGame()">
+  <a class="back-btn" routerLink="/">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
       <path d="M19 12H5M12 5l-7 7 7 7"/>
     </svg>
     Volver
   </a>
 
-  <!-- En selección o won: navega hacia atrás (pantalla principal) -->
-  <a class="back-btn" *ngIf="gameState === 'selecting' || gameState === 'won'" routerLink="/">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-      <path d="M19 12H5M12 5l-7 7 7 7"/>
-    </svg>
-    Volver
-  </a>
+  <img
+    src="/assets/img/portal.png"
+    alt="Portal"
+    class="portal-img"
+    (load)="portalLoaded = true"
+    [class.portal-img--hidden]="!portalLoaded"
+  />
+  <h1 class="memory-title">Juego de Memoria</h1>
+  <p class="memory-subtitle">Selecciona la dificultad</p>
 
-  <!-- ===== PANTALLA SELECCIÓN DE DIFICULTAD ===== -->
-  <div class="difficulty-screen" *ngIf="gameState === 'selecting'">
-
-    <img 
-      src="/assets/img/portal.png" 
-      alt="Portal" 
-      class="portal-img"
-      (load)="portalLoaded = true"
-      [class.portal-img--hidden]="!portalLoaded"
-    />
-    <h1 class="memory-title">Juego de Memoria</h1>
-    <p class="memory-subtitle">Selecciona la dificultad</p>
-
-    <div class="difficulty-cards">
-
-      <button class="diff-card" [class.diff-card--active]="difficulty === 'easy'" (click)="selectDifficulty('easy')">
-        <span class="diff-icon">🟢</span>
-        <span class="diff-label">{{ config.easy.label }}</span>
-        <span class="diff-desc">4×3 · 6 pares</span>
-      </button>
-
-      <button class="diff-card" [class.diff-card--active]="difficulty === 'normal'" (click)="selectDifficulty('normal')">
-        <span class="diff-icon">🟡</span>
-        <span class="diff-label">{{ config.normal.label }}</span>
-        <span class="diff-desc">4×4 · 8 pares</span>
-      </button>
-
-      <button class="diff-card" [class.diff-card--active]="difficulty === 'hard'" (click)="selectDifficulty('hard')">
-        <span class="diff-icon">🔴</span>
-        <span class="diff-label">{{ config.hard.label }}</span>
-        <span class="diff-desc">6×4 · 12 pares</span>
-      </button>
-
-    </div>
-
-    <button class="start-btn" (click)="startGame()">Iniciar juego →</button>
-    <!-- Estadisticas Personal / Global -->
-    <div class="section-divider">
-      <span>📊 Estadísticas</span>
-    </div>
-
-    <!-- Tabs Personal / Global -->
-    <div class="stats-tabs">
-      <button class="stats-tab" [class.stats-tab--active]="statsTab === 'personal'" (click)="statsTab = 'personal'">
-        👤 Personal
-      </button>
-      <button class="stats-tab" [class.stats-tab--active]="statsTab === 'global'" (click)="setStatsTab('global')">
-        🌍 Global
-      </button>
-    </div>
-
-    <!-- ===== TAB PERSONAL ===== -->
-    <ng-container *ngIf="statsTab === 'personal'">
-
-      <div class="records-row">
-        <div *ngFor="let d of difficulties" class="record-chip" [class.record-chip--active]="difficulty === d">
-          <span class="record-chip__label">{{ config[d].label }}</span>
-          <span class="record-chip__score" *ngIf="getBestForDifficulty(d)">
-            🏆 {{ getBestForDifficulty(d)?.score }}
-          </span>
-          <span class="record-chip__score record-chip__empty" *ngIf="!getBestForDifficulty(d)">
-            Sin récord
-          </span>
-        </div>
-      </div>
-
-      <div class="history-section" *ngIf="history.length > 0">
-        <div class="history-header">
-          <span class="history-title">Últimas partidas</span>
-          <button class="history-clear" (click)="clearHistory()">Limpiar</button>
-        </div>
-        <div class="history-list">
-          <div *ngFor="let r of history" class="history-row">
-            <span class="history-diff" [attr.data-diff]="r.difficulty">{{ r.difficultyLabel }}</span>
-            <span class="history-score">{{ r.score }} pts</span>
-            <span class="history-time">⏱ {{ r.time }}</span>
-            <span class="history-attempts">🎯 {{ r.attempts }}</span>
-            <span class="history-date">{{ r.date }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="no-history" *ngIf="history.length === 0">
-        <p>Aún no has jugado ninguna partida</p>
-      </div>
-
-    </ng-container>
-
-    <!-- ===== TAB GLOBAL ===== -->
-    <ng-container *ngIf="statsTab === 'global'">
-
-      <!-- Tabs de dificultad global -->
-      <div class="global-diff-tabs">
-        <button *ngFor="let d of difficulties"
-          class="global-diff-tab"
-          [class.global-diff-tab--active]="globalDifficulty === d"
-          (click)="setGlobalDifficulty(d)">
-          {{ config[d].label }}
-        </button>
-      </div>
-
-      <!-- Loading -->
-      <div class="ranking-loading" *ngIf="isLoadingGlobal">
-        <div class="loading-spinner"></div>
-        <p class="loading-text">Cargando ranking...</p>
-      </div>
-
-      <!-- Lista -->
-      <div class="history-section" *ngIf="!isLoadingGlobal">
-        <div class="history-list" *ngIf="globalRankings.length > 0">
-          <div *ngFor="let r of globalRankings; let i = index" class="history-row" [class.ranking-row--top3]="i < 3">
-            <span class="rank-medal">{{ getMedalIcon(i) }}</span>
-            <span class="history-score rank-apodo">{{ r.apodo }}</span>
-            <span class="history-score">{{ r.score }} pts</span>
-            <span class="history-time">⏱ {{ r.time }}</span>
-            <span class="history-date">{{ r.date }}</span>
-          </div>
-        </div>
-        <div class="no-history" *ngIf="globalRankings.length === 0">
-          <p>¡Sé el primero en el ranking {{ config[globalDifficulty].label }}!</p>
-        </div>
-      </div>
-
-    </ng-container>
-
+  <div class="difficulty-cards">
+    <button class="diff-card" [class.diff-card--active]="difficulty === 'easy'" (click)="selectDifficulty('easy')">
+      <span class="diff-icon">🟢</span>
+      <span class="diff-label">{{ config.easy.label }}</span>
+      <span class="diff-desc">4×3 · 6 pares</span>
+    </button>
+    <button class="diff-card" [class.diff-card--active]="difficulty === 'normal'" (click)="selectDifficulty('normal')">
+      <span class="diff-icon">🟡</span>
+      <span class="diff-label">{{ config.normal.label }}</span>
+      <span class="diff-desc">4×4 · 8 pares</span>
+    </button>
+    <button class="diff-card" [class.diff-card--active]="difficulty === 'hard'" (click)="selectDifficulty('hard')">
+      <span class="diff-icon">🔴</span>
+      <span class="diff-label">{{ config.hard.label }}</span>
+      <span class="diff-desc">6×4 · 12 pares</span>
+    </button>
   </div>
 
-  <!-- ===== PANTALLA DE JUEGO ===== -->
-  <div class="game-screen" *ngIf="gameState === 'playing'">
+  <button class="start-btn" (click)="startGame()">Iniciar juego →</button>
 
-    <!-- HUD -->
-    <div class="hud">
-      <div class="hud-stat">
-        <span class="hud-label">Intentos</span>
-        <span class="hud-value">{{ attempts }}</span>
-      </div>
-      <div class="hud-progress">
-        <div class="progress-bar">
-          <div class="progress-fill" [style.width.%]="progressPercent"></div>
-        </div>
-        <span class="progress-text">{{ matchedPairs }}/{{ totalPairs }} pares</span>
-      </div>
-      <div class="hud-stat">
-        <span class="hud-label">Tiempo</span>
-        <span class="hud-value hud-timer">{{ formattedTime }}</span>
+  <div class="section-divider">
+    <span>📊 Estadísticas</span>
+  </div>
+
+  <!-- Tabs Personal / Global -->
+  <div class="stats-tabs">
+    <button class="stats-tab" [class.stats-tab--active]="statsTab === 'personal'" (click)="statsTab = 'personal'">
+      👤 Personal
+    </button>
+    <button class="stats-tab" [class.stats-tab--active]="statsTab === 'global'" (click)="setStatsTab('global')">
+      🌍 Global
+    </button>
+  </div>
+
+  <!-- TAB PERSONAL -->
+  <ng-container *ngIf="statsTab === 'personal'">
+    <div class="records-row">
+      <div *ngFor="let d of difficulties" class="record-chip" [class.record-chip--active]="difficulty === d">
+        <span class="record-chip__label">{{ config[d].label }}</span>
+        <span class="record-chip__score" *ngIf="getBestForDifficulty(d)">
+          🏆 {{ getBestForDifficulty(d)?.score }}
+        </span>
+        <span class="record-chip__score record-chip__empty" *ngIf="!getBestForDifficulty(d)">
+          Sin récord
+        </span>
       </div>
     </div>
-    <!-- Loading -->
-    <div class="board-loading" *ngIf="isLoadingCards">
+
+    <div class="history-section" *ngIf="history.length > 0">
+      <div class="history-header">
+        <span class="history-title">Últimas partidas</span>
+        <button class="history-clear" (click)="clearHistory()">Limpiar</button>
+      </div>
+      <div class="history-list">
+        <div *ngFor="let r of history" class="history-row">
+          <span class="history-diff" [attr.data-diff]="r.difficulty">{{ r.difficultyLabel }}</span>
+          <span class="history-score">{{ r.score }} pts</span>
+          <span class="history-time">⏱ {{ r.time }}</span>
+          <span class="history-attempts">🎯 {{ r.attempts }}</span>
+          <span class="history-date">{{ r.date }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-history" *ngIf="history.length === 0">
+      <p>Aún no has jugado ninguna partida</p>
+    </div>
+  </ng-container>
+
+  <!-- TAB GLOBAL -->
+  <ng-container *ngIf="statsTab === 'global'">
+    <div class="global-diff-tabs">
+      <button *ngFor="let d of difficulties"
+        class="global-diff-tab"
+        [class.global-diff-tab--active]="globalDifficulty === d"
+        (click)="setGlobalDifficulty(d)">
+        {{ config[d].label }}
+      </button>
+    </div>
+
+    <div class="ranking-loading" *ngIf="isLoadingGlobal">
       <div class="loading-spinner"></div>
-      <p class="loading-text">Cargando personajes...</p>
+      <p class="loading-text">Cargando ranking...</p>
     </div>
 
-    <!-- Tablero -->
-    <div class="board"
-     *ngIf="!isLoadingCards"
-     [class.board--easy]="difficulty === 'easy'"
-     [class.board--normal]="difficulty === 'normal'"
-     [class.board--hard]="difficulty === 'hard'"
-     [style.grid-template-columns]="'repeat(' + cols + ', 1fr)'">
-      <div
-        *ngFor="let card of cards"
-        class="memory-card"
-        [class.is-flipped]="card.flipped || card.matched"
-        [class.is-matched]="card.matched"
-        [class.is-mismatch]="mismatchIds.has(card.id)"
-        (click)="flipCard(card)"
-      >
-        <div class="memory-card__inner">
-          <!-- Dorso -->
-          <div class="memory-card__back">
-            <span class="card-question">?</span>
-          </div>
-          <!-- Frente -->
-          <div class="memory-card__front">
-            <img [src]="card.image" [alt]="card.name" />
-            <span class="card-name">{{ card.name }}</span>
-          </div>
+    <div class="history-section" *ngIf="!isLoadingGlobal">
+      <div class="history-list" *ngIf="globalRankings.length > 0">
+        <div *ngFor="let r of globalRankings; let i = index" class="history-row" [class.ranking-row--top3]="i < 3">
+          <span class="rank-medal">{{ getMedalIcon(i) }}</span>
+          <span class="history-score rank-apodo">{{ r.apodo }}</span>
+          <span class="history-score">{{ r.score }} pts</span>
+          <span class="history-time">⏱ {{ r.time }}</span>
+          <span class="history-date">{{ r.date }}</span>
         </div>
+      </div>
+      <div class="no-history" *ngIf="globalRankings.length === 0">
+        <p>¡Sé el primero en el ranking {{ config[globalDifficulty].label }}!</p>
       </div>
     </div>
-  </div>
-
-  <!-- ===== PANTALLA DE VICTORIA ===== -->
-  <div class="won-screen" *ngIf="gameState === 'won'">
-    <canvas #confettiCanvas class="confetti-canvas"></canvas>
-    <div class="won-content">
-      <div class="won-icon">🎉</div>
-      <h2 class="won-title">¡Completado!</h2>
-      <!-- Badge nuevo récord -->
-      <div class="new-record-badge" *ngIf="isNewRecord">
-        🏆 ¡Nuevo récord personal!
-      </div>
-
-      <div class="won-stats">
-        <div class="won-stat">
-          <span class="won-stat__label">Tiempo</span>
-          <span class="won-stat__value">{{ formattedTime }}</span>
-        </div>
-        <div class="won-stat">
-          <span class="won-stat__label">Intentos</span>
-          <span class="won-stat__value">{{ attempts }}</span>
-        </div>
-        <div class="won-stat won-stat--score">
-          <span class="won-stat__label">Puntaje</span>
-          <span class="won-stat__value">{{ finalScore }}</span>
-        </div>
-      </div>
-      <!-- Mejor puntaje anterior -->
-      <div class="prev-record" *ngIf="getBestForDifficulty(difficulty) && !isNewRecord">
-        <span class="prev-record__label">Tu récord en {{ config[difficulty].label }}</span>
-        <span class="prev-record__value">🏆 {{ getBestForDifficulty(difficulty)?.score }} pts</span>
-      </div>
-
-      <div class="won-actions">
-        <button class="start-btn" (click)="playAgain()">Jugar de nuevo</button>
-        <button class="restart-btn" (click)="restartGame()">Cambiar dificultad</button>
-      </div>
-      <!-- Guardar en ranking global -->
-      <div class="ranking-save" *ngIf="!apodoGuardado">
-        <p class="ranking-save__label">¿Quieres aparecer en el ranking global?</p>
-
-        <!-- Si ya está logueado -->
-        <div class="ranking-save__logged" *ngIf="currentUser">
-          <img [src]="currentUser.photoURL" class="user-avatar" [alt]="currentUser.displayName || ''" />
-          <span class="user-name">{{ currentUser.displayName }}</span>
-          <button class="save-score-btn" (click)="saveToRanking(currentUser!)" [disabled]="isSavingScore">
-            {{ isSavingScore ? 'Guardando...' : 'Guardar puntaje 🚀' }}
-          </button>
-        </div>
-
-        <!-- Si no está logueado -->
-        <div class="ranking-save__row" *ngIf="!currentUser">
-          <button class="google-btn" (click)="loginAndSave()" [disabled]="isLoggingIn">
-            <svg viewBox="0 0 24 24" width="18" height="18">
-              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
-              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-            </svg>
-            {{ isLoggingIn ? 'Conectando...' : 'Continuar con Google' }}
-          </button>
-          <button class="omitir-btn" (click)="apodoGuardado = true">Omitir</button>
-        </div>
-      </div>
-
-      <!-- Confirmación guardado -->
-      <div class="ranking-saved" *ngIf="apodoGuardado && currentUser">
-        <p class="ranking-saved__text">✅ ¡Puntaje guardado como <strong>{{ currentUser.displayName }}</strong>!</p>
-        <a routerLink="/ranking" class="view-ranking-btn">Ver ranking global →</a>
-      </div>
-    </div>
-  </div>
+  </ng-container>
 
 </div>
