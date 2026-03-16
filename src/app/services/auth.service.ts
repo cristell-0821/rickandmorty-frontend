@@ -1,19 +1,13 @@
 import { Injectable } from '@angular/core';
-import { initializeApp } from 'firebase/app';
 import {
-  getAuth,
   signInWithPopup,
   GoogleAuthProvider,
   signOut,
   onAuthStateChanged,
   User
 } from 'firebase/auth';
-import { environment } from '../../environments/environment';
 import { BehaviorSubject } from 'rxjs';
-
-const app = initializeApp(environment.firebase);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
+import { auth } from './firebase';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +18,6 @@ export class AuthService {
   currentUser$ = this.currentUserSubject.asObservable();
 
   constructor() {
-    // Escucha cambios de sesión automáticamente
     onAuthStateChanged(auth, user => {
       this.currentUserSubject.next(user);
     });
@@ -32,7 +25,7 @@ export class AuthService {
 
   async loginWithGoogle(): Promise<User | null> {
     try {
-      const result = await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, new GoogleAuthProvider());
       return result.user;
     } catch (error) {
       console.error('Error al iniciar sesión:', error);

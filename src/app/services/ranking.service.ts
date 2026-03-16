@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, where } from 'firebase/firestore';
 import { environment } from '../../environments/environment';
+import { db } from './firebase';
 
 export interface RankingEntry {
   apodo: string;
@@ -13,8 +14,6 @@ export interface RankingEntry {
   date: string;
 }
 
-const app = initializeApp(environment.firebase);
-const db = getFirestore(app);
 
 @Injectable({
   providedIn: 'root'
