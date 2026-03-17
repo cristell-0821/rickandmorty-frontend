@@ -47,24 +47,10 @@
 | API externa | [Rick and Morty API](https://rickandmortyapi.com) |
 | PDF | PdfMake |
 | Deploy Frontend | Vercel |
-| Deploy Backend | Railway |
 
 ---
 
 ## 🚀 Correr en local
-
-### Backend
-
-```bash
-# Clonar el repo
-git clone https://github.com/cristell-0821/rickandmorty-backend.git
-cd rickandmorty-backend
-
-# Levantar con Maven
-./mvnw spring-boot:run
-```
-
-El backend corre en `http://localhost:8080`
 
 ### Frontend
 
@@ -113,7 +99,6 @@ src/
 | Servicio | URL |
 |---------|-----|
 | Frontend (Vercel) | [rickandmorty-frontend-omega.vercel.app](https://rickandmorty-frontend-omega.vercel.app) |
-| Backend (Railway) | [rickandmorty-backend-production-7746.up.railway.app](https://rickandmorty-backend-production-7746.up.railway.app) |
 
 ---
 
