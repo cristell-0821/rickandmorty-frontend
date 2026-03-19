@@ -325,6 +325,7 @@
   font-size: 1rem;
   min-width: 28px;
   text-align: center;
+  color: #ffffff !important;
 }
 .rank-apodo {
   font-weight: 700;

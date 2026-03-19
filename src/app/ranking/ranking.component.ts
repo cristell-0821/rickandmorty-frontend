@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ViewEncapsulation } from '@angular/core';
 import { RankingService, RankingEntry } from '../services/ranking.service';
 
 type Difficulty = 'easy' | 'normal' | 'hard';
@@ -6,7 +6,8 @@ type Difficulty = 'easy' | 'normal' | 'hard';
 @Component({
   selector: 'app-ranking',
   templateUrl: './ranking.component.html',
-  styleUrls: ['./ranking.component.css']
+  styleUrls: ['./ranking.component.css'],
+  encapsulation: ViewEncapsulation.None 
 })
 export class RankingComponent implements OnInit {
 
