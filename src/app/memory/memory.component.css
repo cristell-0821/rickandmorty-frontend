@@ -35,7 +35,7 @@
 }
 .back-btn:visited { color: rgba(68, 215, 232, 0.7); }
 .back-btn svg { width: 16px; height: 16px; transition: transform 0.2s; }
-.back-btn:hover { color: var(--rm-cyan); gap: 12px; }
+.back-btn:hover { color: rgba(68, 215, 232, 0.7); gap: 12px; }
 .back-btn:hover svg { transform: translateX(-3px); }
 
 /* ===================== PORTAL ===================== */
