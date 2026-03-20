@@ -52,6 +52,8 @@ export class MemoryGameComponent implements OnInit, OnDestroy {
   history: GameRecord[] = [];
   bestScores: { [key in Difficulty]?: GameRecord } = {};
 
+  showCheatModal: boolean = false;
+
   @ViewChild('confettiCanvas') confettiCanvas!: ElementRef<HTMLCanvasElement>;
   private confettiAnimFrame: any;
   private audioCtx: AudioContext | null = null;
@@ -246,6 +248,11 @@ export class MemoryGameComponent implements OnInit, OnDestroy {
   }
 
   async saveToRanking(user: User): Promise<void> {
+    const minTimes = { easy: 10, normal: 20, hard: 30 };
+    if (this.elapsedTime < minTimes[this.difficulty]) {
+      this.showCheatModal = true;
+      return;
+    }
     this.isSavingScore = true;
     await this.rankingService.saveScore({
       apodo: user.displayName || 'Anónimo',

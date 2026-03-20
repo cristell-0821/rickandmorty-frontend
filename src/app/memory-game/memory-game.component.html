@@ -130,8 +130,15 @@
         <p class="ranking-saved__text">✅ ¡Puntaje guardado como <strong>{{ currentUser.displayName }}</strong>!</p>
         <a routerLink="/memory" class="view-ranking-btn">Ver estadísticas →</a>
       </div>
-
     </div>
   </div>
-
+  <!-- Modal anti-trampa -->
+  <div class="cheat-modal" *ngIf="showCheatModal">
+    <div class="cheat-content">
+      <p class="cheat-icon">🧪</p>
+      <h3 class="cheat-title">¡Wubba Lubba Dub Dub!</h3>
+      <p class="cheat-text">Rick dice que hacer trampa es para Jerrys.<br>Tu puntaje no será guardado.</p>
+      <button class="start-btn" (click)="showCheatModal = false">Entendido, soy un Jerry 😔</button>
+    </div>
+  </div>
 </div>
